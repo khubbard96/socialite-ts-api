@@ -1,0 +1,90 @@
+//group schema
+
+group: {
+
+    id: 99999,
+    title: "My first group!",
+    preview: "Kevin posted an image.",
+
+    admins: [ 1234, 5555 ], //group always has to have admins
+    permissions: [
+        {
+
+        }
+    ],
+    members: [
+        {
+            id: 5555,
+            nickname: "Kevin",
+            username: "kevlar2020@gmail.com"
+        },
+        ...
+    ],
+    messages: [
+        {
+            id: 1234,
+            sender: 7890,
+            text: "foo bar baz",
+            likes: [], //collection of user id's that liked this message
+            attachments: [
+                {
+                    type: "image",    //dictates what type of attachment is contained within this message
+                    payload: ""     //this can either be a link, or a user ID. The client will handle this based on the attachment type
+                }
+            ]
+        },
+        ... 
+    ],
+    pinned: [
+        {
+            persistent: true, //whether or not the message will clear after being read by a user
+            message: 1234     //the message that is pinned
+        },
+        ...
+    ], //collection of the pinned messages of the group
+    events: [
+        {
+            id: 1234
+            title: "My event",
+            state: "pending",
+            invitees: {
+                groups: [],
+                members: []
+            },      //events can invite entire groups or specific members. invited groups and members are notified, others can see event but are not specifically notified
+        },          //event IDs are unique from group messages, rather events will be attached to normal group messages with the payload pointing to the event
+        ...
+    ]
+
+}
+
+//attachment types
+{
+    image,        //an image associate with a post
+    mention,      //mentions another member of the group
+    web_link,     //to preview the webpage
+    event,        //carries a link to an event/invite
+}
+
+//event types
+{
+    pending,      //an event that is awaiting participant input
+    active,       //an event that is scheduled
+    expired,      //an event that has passed
+}                 //any events that are deleted are actually deleted.
+
+
+//group actions
+{
+    edit_members,         //user has permission to add or remove members from the group
+    edit_group,           //user has permission to edit group title, profile image
+    post_message,         //user has permission to post messages
+    delete_message,       //user has permission to delete messages (any message)
+    post_mention,         //user has permission to use mentions
+    edit_permission,      //user has permission to edit group permissions & permission group members
+}
+
+
+/***************
+routes
+***************/
+

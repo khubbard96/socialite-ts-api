@@ -28,7 +28,7 @@ const MessageAttachment = createSchema(
 );
 
 const Message = createSchema(
-    //TODO
+    // TODO
 );
 
 const GroupMember = createSchema(
@@ -53,5 +53,5 @@ export default Group;
 /**
  *  Necessary functions:
  *      -on user delete
- *  
+ *
  */
