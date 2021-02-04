@@ -5,7 +5,7 @@ import logger from "../../../util/logger";
 import { Query } from "mongoose";
 import SocialiteApiRoute from "../../SocialiteApiRoute";
 
-//a comment
+// a comment
 
 router.put("/user/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try{
@@ -27,7 +27,7 @@ router.put("/user/", async (req: express.Request, res: express.Response, next: e
 
         const query: Query<IUser[], IUser, IUser> = User.findByEmail({addr: req.body.email});
 
-        query.select("-password").exec().then((user) => {
+        query.exec().then((user) => {
             res.status(200).send(user);
         });
     } catch (err) {

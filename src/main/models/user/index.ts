@@ -43,7 +43,7 @@ const PhoneSchema: Schema = new Schema(
     }
 );
 
-PhoneSchema.statics.phoneInUse = async function(phone: IPhoneNumber) : Promise<boolean> {
+PhoneSchema.statics.phoneInUse = async function (phone: IPhoneNumber): Promise<boolean> {
 
     return false;
 }
@@ -73,14 +73,14 @@ const PasswordSchema: Schema = new Schema(
     }
 );
 
-PasswordSchema.pre('save', function(this: IPassword, next: () => void) {
-    if(this.isNew) {
+PasswordSchema.pre('save', function (this: IPassword, next: () => void) {
+    if (this.isNew) {
         this.value = bcrypt.hashSync(this.value, USER_PASS_SALT_ROUNDS)
     }
     next();
 });
 
-PasswordSchema.statics.isValid = function (raw:string) {
+PasswordSchema.statics.isValid = function (raw: string) {
     // TODO
     return raw.length > 8;
 }
@@ -90,7 +90,7 @@ PasswordSchema.methods.doesMatch = function (tryIn: string) {
     return false;
 }
 
-interface IPassword extends Document{
+interface IPassword extends Document {
     value: string,
 }
 
@@ -123,44 +123,61 @@ export interface IEmailAddress {
 }
 
 /* USER SCHEMA */
-const UserSchema: Schema = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: EmailSchema,
-        required: true,
-        validate: {
-            async validator(email: IEmailAddress) {
-                return await User.emailIsUnique(email);
-            },
-            message: "Email is already in use."
+const UserSchema: Schema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: EmailSchema,
+            required: true,
+            validate: {
+                async validator(email: IEmailAddress) {
+                    return await User.emailIsUnique(email);
+                },
+                message: "Email is already in use."
+            }
+        },
+        password: {
+            type: PasswordSchema,
+            required: true,
+            select: false
+        },
+        phone: {
+            type: PhoneSchema,
+            required: true,
+            validate: {
+                async validator(phone: IPhoneNumber) {
+                    // validate phone number uniqueness
+                    return (await User.find({
+                        phone: {
+                            raw: phone.raw,
+                            code: phone.code
+                        }
+                    })).length === 0;
+                },
+                message: "Phone number is already in use."
+            }
+        },
+        auth: {
+            type: String,
+            required: true,
+            immutable: true,
+            default: generateAuthKey,
+            select: false
         }
     },
-    password: {
-        type: PasswordSchema,
-        required: true,
-    },
-    phone: {
-        type: PhoneSchema,
-        required: true,
-        validate: {
-            async validator(phone: IPhoneNumber) {
-                // validate phone number uniqueness
-                return (await User.find({
-                    phone: {
-                        raw: phone.raw,
-                        code: phone.code
-                    }
-                })).length === 0;
-            },
-            message: "Phone number is already in use."
-        }
+    {
+        versionKey: false,
     }
-});
+);
 
-UserSchema.statics.findByEmail = function (emailIn:IEmailAddress): Query<IUser[], IUser, IUser> {
+function generateAuthKey(): string {
+    return "asdf";
+}
+
+UserSchema.statics.findByEmail = function (emailIn: IEmailAddress): Query<IUser[], IUser, IUser> {
     return this.find(
         {
             email:
@@ -169,13 +186,13 @@ UserSchema.statics.findByEmail = function (emailIn:IEmailAddress): Query<IUser[]
     )
 }
 
-UserSchema.statics.emailIsUnique = async function(emailIn:IEmailAddress): Promise<boolean> {
+UserSchema.statics.emailIsUnique = async function (emailIn: IEmailAddress): Promise<boolean> {
     let result: boolean = false;
     result = (await User.findByEmail(emailIn)).length === 0
     return result;
 }
 
-UserSchema.statics.findByPhoneNumber = function (phoneIn:IPhoneNumber) {
+UserSchema.statics.findByPhoneNumber = function (phoneIn: IPhoneNumber) {
     return this.find(
         {
             phone: {

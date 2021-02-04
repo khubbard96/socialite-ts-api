@@ -50,6 +50,7 @@ function bootstrapApplication(app: Express): void {
 
         routes.forEach((route: SocialiteApiRoute) => {
             logger.debug("[Route Bootstrapper] Bootstrapping route " + route.getName());
+            app.use("/api", route.getRoute());
         });
 
     });
