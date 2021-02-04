@@ -99,11 +99,9 @@ if (process.env.NODE_ENV !== "production") {
 
                 if (localId.match(/^\\index.js$/)) return;
 
-                if (localId.match(/^\\src\\.*$/)) return;
+                //if (localId.match(/^\\src\\.*$/)) return;
 
                 if (localId.match(/^\\db\\.*$/)) return;
-
-                // console.log(id);
 
                 // Remove the module from the cache
                 delete require.cache[id];

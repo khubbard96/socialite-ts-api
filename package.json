@@ -19,10 +19,14 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@types/bcrypt": "^3.0.0",
     "@types/mongoose": "^5.10.3",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
     "chokidar": "^3.5.1",
     "express": "^4.17.1",
     "mongoose": "^5.11.14",
+    "password-validator": "^5.1.1",
     "ts-mongoose": "0.0.24",
     "winston": "^3.3.3"
   }

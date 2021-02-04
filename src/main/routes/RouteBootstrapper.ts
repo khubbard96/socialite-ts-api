@@ -8,13 +8,15 @@
 
 import fs from "fs";
 import logger from "../util/logger"
+import SocialiteApiRoute from "./SocialiteApiRoute";
+import { Express } from "express";
 
 const ROUTES_LOCATION = __dirname;
 
-const routeHandlers = [];
+const routeHandlers: SocialiteApiRoute[] = [];
 
-function pullModule(dir) {
-    const files = fs.readdirSync(
+async function pullModule(dir) {
+    const files = await fs.readdirSync(
         dir,
         {
             withFileTypes: true
@@ -22,10 +24,11 @@ function pullModule(dir) {
     );
     files.forEach(element => {
         if (element.isDirectory()) {
-            let newHandler;
             try {
-                newHandler = require(dir + "\\" + element.name);
-                routeHandlers.push(newHandler);
+                const potentialRoute = require(dir + "\\" + element.name);
+                if(potentialRoute instanceof SocialiteApiRoute) {
+                    routeHandlers.push(potentialRoute);
+                }
             } catch (err) {
                 pullModule(dir + "\\" + element.name);
             }
@@ -33,10 +36,23 @@ function pullModule(dir) {
     });
 }
 
-function bootstrap() {
-    pullModule(ROUTES_LOCATION)
-    logger.info("Found " + routeHandlers.length + " to bootstrap.");
-    return routeHandlers;
+function findBootstrapable(): Promise<SocialiteApiRoute[]> {
+    return new Promise<SocialiteApiRoute[]>(async (res, rej) => {
+        await pullModule(ROUTES_LOCATION)
+        logger.info("[Route Bootstrapper] Found " + routeHandlers.length + " routes to bootstrap.");
+        res(routeHandlers);
+    });
 }
 
-export default { bootstrap };
+function bootstrapApplication(app: Express): void {
+    logger.info("[Route Bootstrapper] Beginning application route bootstrapping.");
+    findBootstrapable().then((routes: SocialiteApiRoute[]) => {
+
+        routes.forEach((route: SocialiteApiRoute) => {
+            logger.debug("[Route Bootstrapper] Bootstrapping route " + route.getName());
+        });
+
+    });
+}
+
+export default { bootstrapApplication };

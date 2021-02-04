@@ -1,13 +1,14 @@
-const Group = {};
-
 import express from "express";
 const router = express.Router();
+import User from "../../../models/user";
 
 router.put("/group/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const {
         groupName,
-        creator
+        creatorId
     } = req.body;
+
+    const creator = User.findOne({_id: creatorId});
 
     /*const newGroup = new Group({
         name: groupName,

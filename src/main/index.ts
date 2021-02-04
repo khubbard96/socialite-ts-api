@@ -8,21 +8,36 @@
  */
 
 import express from "express";
+import bodyParser from "body-parser";
 import logger from "./util/logger";
-import routes from "./routes/RouteBootstrapper";
+import RouteBootstrapper from "./routes/RouteBootstrapper";
 
 const app: express.Express = express();
 
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+// basic auth key handling
+
+app.use("/api", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    logger.info(`A request was placed to a /api endpoint. ${req.method} ${req.originalUrl}`);
+
+    // TODO: auth key verification before proceeding
+
+    // proceed to next function
+    next();
+});
+
+// TODO:
+// place any application-wide middleware here
+// .
+// .
+// ...........
+
 
 // find and bootstrap routes using the routes finder module.
-routes.bootstrap().map((router: express.Router) => {
-    try {
-        app.use(router);
-        logger.info("Successfully bootstrapped route " + router.name);
-    } catch(err) {
-        logger.warn(router.route + " is not a valid router.")
-    }
-});
+RouteBootstrapper.bootstrapApplication(app);
+
+
 
 module.exports = app;
