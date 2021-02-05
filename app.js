@@ -34,11 +34,12 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 }
 
+logger.info("Application running at " + __dirname);
 
 /*********************/
 // APPLICATION ENTRY POINT
 /*********************/
-const APPLICATION_PATH = "./dist"
+const APPLICATION_PATH = "./dist/src/main"
 
 //initiate connection
 logger.info("Initiating connection to database.")

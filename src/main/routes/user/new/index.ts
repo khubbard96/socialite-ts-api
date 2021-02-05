@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
 import User, { CountryCode, IUser } from "../../../models/user";
-import logger from "../../../util/logger";
+import logger from "../../../util/log";
 import { Query } from "mongoose";
-import SocialiteApiRoute from "../../SocialiteApiRoute";
+import SocialiteApiRoute from "../../../models/routes/SocialiteApiRoute";
 
 // a comment
 
@@ -25,7 +25,7 @@ router.put("/user/", async (req: express.Request, res: express.Response, next: e
             }
         );
 
-        const query: Query<IUser[], IUser, IUser> = User.findByEmail({addr: req.body.email});
+        const query: Query<IUser, IUser, IUser> = User.findByEmail({addr: req.body.email});
 
         query.exec().then((user) => {
             res.status(200).send(user);
@@ -39,6 +39,6 @@ router.put("/user/", async (req: express.Request, res: express.Response, next: e
 
 });
 
-const UserCreationRoute: SocialiteApiRoute = new SocialiteApiRoute("[user] CREATE", router);
+const UserCreationRoute: SocialiteApiRoute = new SocialiteApiRoute("[user] CREATE", router, "/");
 
 module.exports = UserCreationRoute;

@@ -1,4 +1,6 @@
 {
     "defaultPort":8080,
-    "databaseUrl":"mongodb://192.168.1.101:27017/socialight"
+    "databaseUrl":"mongodb://192.168.1.101:27017/socialight",
+
+    "jwtSecret": "ckXKFONOP7wH3wVIC9xh"
 }

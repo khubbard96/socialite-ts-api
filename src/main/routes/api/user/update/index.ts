@@ -1,9 +1,9 @@
-import SocialiteApiRoute from "../../SocialiteApiRoute";
+import SocialiteApiRoute from "../../../../models/routes/SocialiteApiRoute";
 
 import express from "express";
 const router = express.Router();
-import User, { CountryCode, IUser } from "../../../models/user";
-import logger from "../../../util/logger";
+import User, { CountryCode, IUser } from "../../../../models/user";
+import logger from "../../../../util/log";
 import { Query } from "mongoose";
 
 
@@ -45,6 +45,6 @@ router.post("/user/", async(req: express.Request, res: express.Response, next: e
 
 });
 
-const UserUpdateRoute: SocialiteApiRoute = new SocialiteApiRoute("[user] UPDATE", router);
+const UserUpdateRoute: SocialiteApiRoute = new SocialiteApiRoute("[user] UPDATE", router, "/api");
 
 module.exports = UserUpdateRoute;
