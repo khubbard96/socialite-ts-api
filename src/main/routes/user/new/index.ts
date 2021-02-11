@@ -33,10 +33,10 @@ router.put("/user/", async (req: express.Request, res: express.Response, next: e
             const apiToken:string = generateToken(user._id);
             res.status(200).send({user, apiToken});
         });
-    } catch (err) {
+    } catch (e) {
         logger.warn("New user creation failed.")
         res.status(400).send({
-            err
+            e
         });
     }
 

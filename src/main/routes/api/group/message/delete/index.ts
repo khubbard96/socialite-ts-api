@@ -12,8 +12,6 @@ router.delete("/groups/:id/messages", async (req: express.Request, res: express.
 
         const group:IGroup = await Group.findById(req.params.id);
 
-        if(!group) return res.status(400).send({err: "No group with that id."});
-
         const messageId = req.body.message._id
 
         await group.deleteMessage(messageId);
@@ -25,4 +23,4 @@ router.delete("/groups/:id/messages", async (req: express.Request, res: express.
     }
 });
 
-module.exports = new SocialiteApiRoute("[messages] UPDATE", router, "/api");
+module.exports = new SocialiteApiRoute("[messages] DELETE", router, "/api");

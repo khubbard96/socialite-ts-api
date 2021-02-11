@@ -37,8 +37,6 @@ router.post("/groups/:id/owner", async (req: express.Request, res: express.Respo
 
         const group:IGroup = await Group.findById(groupId);
 
-        if(!group) return res.status(400).send({err: "No group with that id."});
-
         await group.updateOwner(newOwner);
 
         res.status(200).send(group.toJSON());

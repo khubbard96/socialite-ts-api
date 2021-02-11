@@ -14,8 +14,6 @@ router.post("/groups/:id/messages", async (req: express.Request, res: express.Re
 
         const group:IGroup = await Group.findById(req.params.id);
 
-        if(!group) return res.status(400).send({err: "No group with that id."});
-
         await group.updateMessage(message);
 
         res.status(200).send(group);
