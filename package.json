@@ -21,6 +21,8 @@
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/mongoose": "^5.10.3",
+    "@types/underscore": "^1.10.24",
+    "@types/uuid": "^8.3.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "chokidar": "^3.5.1",
@@ -31,6 +33,8 @@
     "mongoose-hidden": "^1.9.1",
     "password-validator": "^5.1.1",
     "ts-mongoose": "0.0.24",
+    "underscore": "^1.12.0",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3"
   }
 }

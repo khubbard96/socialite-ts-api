@@ -4,6 +4,7 @@ import User, { CountryCode, IUser } from "../../../models/user";
 import logger from "../../../util/log";
 import { Query } from "mongoose";
 import SocialiteApiRoute from "../../../models/routes/SocialiteApiRoute";
+import { generateToken } from "../../../util/auth";
 
 // a comment
 
@@ -28,7 +29,9 @@ router.put("/user/", async (req: express.Request, res: express.Response, next: e
         const query: Query<IUser, IUser, IUser> = User.findByEmail({addr: req.body.email});
 
         query.exec().then((user) => {
-            res.status(200).send(user);
+            // TODO redirect here + send a api token
+            const apiToken:string = generateToken(user._id);
+            res.status(200).send({user, apiToken});
         });
     } catch (err) {
         logger.warn("New user creation failed.")
