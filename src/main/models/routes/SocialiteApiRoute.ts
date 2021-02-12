@@ -1,9 +1,12 @@
 import { Router } from "express";
+import Joi from "joi";
 
 class SocialiteApiRoute {
     private name: string;
     private route: Router;
     private handle: string;
+
+    private validator: Joi.ObjectSchema;
 
     constructor(name: string, router: Router, handle: string) {
         if(!name) throw new Error();
@@ -21,6 +24,16 @@ class SocialiteApiRoute {
     }
     getHandle(): string{
         return this.handle;
+    }
+
+    addValidation(validator: Joi.ObjectSchema) {
+        this.validator = validator;
+    }
+    hasValidator():boolean {
+        return !!this.validator
+    }
+    getValidator():Joi.ObjectSchema {
+        return this.validator;
     }
 }
 

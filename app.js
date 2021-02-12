@@ -34,8 +34,6 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 }
 
-logger.info("Application running at " + __dirname);
-
 /*********************/
 // APPLICATION ENTRY POINT
 /*********************/
@@ -49,7 +47,6 @@ connectDb()
     logger.info("Database connected successfully.");
 
     logger.info("*** STARTING API APPLICATION ***")
-    logger.info("[Bootstrapping API routes.]");
     const SOCIALITE_API = require(APPLICATION_PATH);
     if (SOCIALITE_API) {
         logger.info("[Starting application at port " + APP_CONFIG.defaultPort + "]");
@@ -57,57 +54,3 @@ connectDb()
     }
 
 });
-
-
-
-
-
-
-
-
-
-
-/*********************/
-// RUDIMENTARY HOT MODULE RELOADING - needs work
-/*********************/
-
-/*TODO
-    -refine legacy code to be project specific
-*/
-if (process.env.NODE_ENV !== "production") {
-
-    const chokidar = require("chokidar");
-    // Set up watcher to watch all files in ./
-    const watcher = chokidar.watch("./");
-
-    watcher.on("ready", function () {
-        // On any file change event
-        // You could customise this to only run on new/save/delete etc
-        // This will also pass the file modified into the callback
-        // however for this example we aren't using that information
-        watcher.on("all", function () {
-            logger.debug("Reloading server...");
-            // Loop through the cached modules
-            // The "id" is the FULL path to the cached module
-            Object.keys(require.cache).forEach(function (id) {
-                // Get the local path to the module
-                const localId = id.substr(process.cwd().length);
-
-                // Ignore anything not in server/app
-                if (localId.match(/^\\node_modules\\.*$/)) return;
-
-                if (localId.match(/^\\app.js$/)) return;
-
-                if (localId.match(/^\\index.js$/)) return;
-
-                //if (localId.match(/^\\src\\.*$/)) return;
-
-                if (localId.match(/^\\db\\.*$/)) return;
-
-                // Remove the module from the cache
-                delete require.cache[id];
-            });
-            logger.debug("Server reloaded.");
-        });
-    });
-}

@@ -6,8 +6,9 @@ import express, { Router } from "express";
 import logger from "../../util/log";
 const router: Router = express.Router();
 import { verifyToken } from "../../util/auth";
-import bootstrapApplication from "../../util/bootstrap";
-import SocialiteApiRoute from "../../models/routes/SocialiteApiRoute";
+
+import { groupService, userService } from "../microservices";
+import { timeStamp } from "console";
 /**
  * This module contains the top-level API route, which handles all internal app functionality.
  * All requests to this route must be verified via JWT token verification.
@@ -21,6 +22,10 @@ router.use("/api", (req: express.Request, res: express.Response, next: express.N
         (req.body && req.body.access_token) ||
         (req.query && req.query.access_token) ||
         req.headers['x-access-token'];
+
+    if(!token) {
+        return res.status(400).send({err:"Must send access token to access API."});
+    }
 
     req.body.access_token = token;
 
@@ -38,13 +43,16 @@ router.use("/api", (req: express.Request, res: express.Response, next: express.N
             err: "Invalid access token.",
         });
     }
-
-
     // proceed to next function
     next();
 });
 
-bootstrapApplication(router, "/api", __dirname);
+/*
+*   Add in API microservices
+*/
 
-const SocialiteApiRouterRoute: SocialiteApiRoute = new SocialiteApiRoute("[Socialite API] API", router, "/");
-module.exports = SocialiteApiRouterRoute;
+router.use("/api", groupService);
+
+router.use("/api", userService);
+
+export default router;

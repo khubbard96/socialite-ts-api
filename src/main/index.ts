@@ -13,21 +13,18 @@ import logger from "./util/log";
 import { initAuth } from "./util/auth";
 import bootstrapApplication from "./util/bootstrap";
 
+import api from "./routes/api";
+import ext from "./routes/ext";
+
 const app: express.Express = express();
-const router: express.Router = express.Router();
 initAuth(app);
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-// bootstrap entire application router
-bootstrapApplication(router, "/", __dirname + "\\routes");
-
-
-app.use(router);
-
-
+app.use("/", api);
+app.use("/", ext);
 
 
 module.exports = app;

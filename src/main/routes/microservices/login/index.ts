@@ -1,10 +1,12 @@
 import express from "express";
-import SocialiteApiRoute from "../../models/routes/SocialiteApiRoute";
-import logger from "../../util/log";
-import User, { IUser } from "../../models/user";
-import { generateToken } from "../../util/auth";
+import SocialiteApiRoute from "../../../models/routes/SocialiteApiRoute";
+import logger from "../../../util/log";
+import User, { IUser } from "../../../models/user";
+import { generateToken } from "../../../util/auth";
 
 const router: express.Router = express.Router();
+
+logger.debug("LOGIN microservice loaded.");
 
 router.post("/login", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -37,5 +39,4 @@ router.post("/login", async (req: express.Request, res: express.Response, next: 
     }
 });
 
-const SocialiteLoginRoute: SocialiteApiRoute = new SocialiteApiRoute("[app login] LOGIN", router, "/");
-module.exports = SocialiteLoginRoute;
+export default router;

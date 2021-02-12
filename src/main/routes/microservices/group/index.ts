@@ -3,7 +3,9 @@ const router: express.Router = express.Router();
 import logger from "../../../util/log";
 import { getIssuer } from "../../../util/auth";
 import Group, {IGroup} from "../../../models/group";
-import SocialiteApiRoute from "../../../models/routes/SocialiteApiRoute";
+
+
+logger.debug("GROUPS microservice loaded.");
 
 router.use("/groups/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const userId:string = getIssuer(req.body.access_token);
@@ -71,4 +73,64 @@ router.get("/groups/:id", async (req: express.Request, res: express.Response, ne
     }
 });
 
-module.exports = new SocialiteApiRoute("[groups] GET", router, "/api");
+router.put("/groups/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    logger.debug("Request to create new group received.");
+    try {
+        const creatorId:string = getIssuer(req.body.access_token);
+
+        const group:IGroup = await Group.createFromTitleAndCreator(req.body.group_title, creatorId);
+
+        res.status(200).send(group);
+    } catch (err) {
+        res.status(400).send({err});
+    }
+});
+
+router.post("/groups/:id/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    logger.info("Request to update group " + req.params.id + " received.");
+    try {
+        const requestorId:string = getIssuer(req.body.access_token);
+        const newGroup = req.body.group;
+        const groupId:string = req.params.id;
+
+        const group:IGroup = await Group.findById(groupId);
+
+        // TODO - verify action taker has permissions to do this.
+        group.title = newGroup.title;
+
+        const updatedGroup:IGroup = await group.save()
+        res.status(200).send(updatedGroup.toJSON());
+
+    } catch (err) {
+        logger.error(err);
+        res.status(400).send({err});
+    }
+});
+
+router.post("/groups/:id/owner", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    logger.info("Reques to update owner of group " + req.params.id + " received.");
+    try {
+        const requestorId:string = getIssuer(req.body.access_token);
+        const newGroup = req.body.group;
+        const newOwner = newGroup.owner;
+        const groupId = req.params.id;
+
+        const group:IGroup = await Group.findById(groupId);
+
+        await group.updateOwner(newOwner);
+
+        res.status(200).send(group.toJSON());
+    } catch (err) {
+        logger.error(err);
+        res.status(400).send({err});
+    }
+});
+
+import memberService from "./member";
+import messageService from "./message";
+
+router.use(memberService);
+router.use(messageService);
+
+
+export default router;

@@ -25,6 +25,11 @@ const bootstrapApplication = (app: Router, appRoute: string, routesLocation: str
         bootstrappableRoutes.forEach((route: SocialiteApiRoute) => {
             if(route.getHandle() === appRoute) {
                 logger.info("[Route Bootstrapper] Bootstrapping route " + route.getName() + " to application " + appRoute);
+
+                if(route.hasValidator()) {
+                    route.getRoute().use()
+                }
+
                 app.use(appRoute,route.getRoute());
             }
         });
